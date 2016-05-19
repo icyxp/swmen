@@ -1,10 +1,9 @@
 <?php
-namespace Swmen;
+namespace Icyboy\Core\Swoole;
 
 use ErrorException;
-
 use Illuminate\Http\Request as IlluminateRequest;
-
+use Symfony\Component\HttpFoundation\Response;
 use swoole_http_server;
 use swoole_process;
 
@@ -23,11 +22,11 @@ class Server
     public function __construct($config, $swoole_settings = [])
     {
         $this->swoole_http_server = new swoole_http_server($config['host'], $config['port']);
-        $this->pid_file = $config['pid_file'];
-        $this->root_dir = $config['root_dir'];
-        $this->deal_with_public = $config['deal_with_public'];
-        $this->gzip = $config['gzip'];
-        $this->gzip_min_length = $config['gzip_min_length'];
+        $this->pid_file           = $config['pid_file'];
+        $this->root_dir           = $config['root_dir'];
+        $this->deal_with_public   = $config['deal_with_public'];
+        $this->gzip               = $config['gzip'];
+        $this->gzip_min_length    = $config['gzip_min_length'];
 
         if (!empty($swoole_settings)) {
             $this->swoole_http_server->set($swoole_settings);
@@ -42,7 +41,7 @@ class Server
         $this->swoole_http_server->on('WorkerStart', [$this, 'onWorkerStart']);
         $this->swoole_http_server->on('request', [$this, 'onRequest']);
 
-        require __DIR__ . '/mime.php';
+        require __DIR__ . '../config/mime.php';
 
         $this->swoole_http_server->start();
     }
@@ -68,7 +67,6 @@ class Server
         $this->lumen = require $this->root_dir . '/bootstrap/app.php';
 
         $this->public_path = base_path('public');
-
     }
 
     public function onRequest($request, $response)
@@ -78,19 +76,20 @@ class Server
                 return;
             }
         }
+
         try {
-            $illuminate_request = $this->dealWithRequest($request);
+            $illuminate_request  = $this->dealWithRequest($request);
             $illuminate_response = $this->lumen->dispatch($illuminate_request);
 
             // Is gzip enabled and the client accept it?
-            $accept_gzip = $this->gzip && isset($request->header['accept-encoding']) && stripos($request->header['accept-encoding'], 'gzip') !== false;
+            $accept_gzip = $this->gzip && isset($request->header['accept-encoding']) && stripos($request->header['accept-encoding'],
+                    'gzip') !== false;
 
-            if ($illuminate_response instanceof SymfonyResponse) {
+            if ($illuminate_response instanceof Response) {
                 $this->dealWithResponse($response, $illuminate_response, $accept_gzip);
             } else {
                 $response->end((string)$illuminate_response->original);
             }
-
         } catch (ErrorException $e) {
             if (strncmp($e->getMessage(), 'swoole_', 7) === 0) {
                 fwrite(STDOUT, $e->getFile() . '(' . $e->getLine() . '): ' . $e->getMessage() . PHP_EOL);
@@ -105,12 +104,12 @@ class Server
 
     private function dealWithRequest($request)
     {
-        $get = isset($request->get) ? $request->get : array();
-        $post = isset($request->post) ? $request->post : array();
+        $get    = isset($request->get) ? $request->get : array();
+        $post   = isset($request->post) ? $request->post : array();
         $cookie = isset($request->cookie) ? $request->cookie : array();
         $server = isset($request->server) ? $request->server : array();
         $header = isset($request->header) ? $request->header : array();
-        $files = isset($request->files) ? $request->files : array();
+        $files  = isset($request->files) ? $request->files : array();
 
         // merge headers into server which ar filted by swoole
         // make a new array when php 7 has different behavior on foreach
@@ -131,7 +130,8 @@ class Server
 
         $content = $request->rawContent() ?: null;
 
-        $illuminate_request = new IlluminateRequest($get, $post, []/* attributes */, $cookie, $files, $new_server, $content);
+        $illuminate_request = new IlluminateRequest($get, $post, []/* attributes */, $cookie, $files, $new_server,
+            $content);
 
         return $illuminate_request;
     }
@@ -160,22 +160,20 @@ class Server
         }
         // content
         $content = $illuminate_response->getContent();
-
         // check gzip
-        if($accept_gzip && isset($response->header['Content-Type'])) {
+        if ($accept_gzip && isset($response->header['Content-Type'])) {
             $mime = $response->header['Content-Type'];
-            if(strlen($content) > $this->gzip_min_length && is_mime_gzip($mime)) {
+            if (strlen($content) > $this->gzip_min_length && is_mime_gzip($mime)) {
                 $response->gzip($this->gzip);
             }
         }
-
         // send content & close
         $response->end($content);
     }
 
     private function dealWithPublic($request, $response)
     {
-        $uri = $request->server['request_uri'];
+        $uri  = $request->server['request_uri'];
         $file = realpath($this->public_path . $uri);
         if (is_file($file)) {
             if (!strncasecmp($file, $uri, strlen($this->public_path))) {
@@ -186,9 +184,9 @@ class Server
                 $response->sendfile($file);
             }
             return true;
-
         } else {
         }
+
         return false;
 
     }

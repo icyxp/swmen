@@ -12,7 +12,13 @@
     ],
     "require": {
         "php": ">=5.5.9",
+        "ramsey/uuid": "~2.8",
         "laravel/lumen-framework": "5.2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Icyboy\\Core\\": ""
+        }
     },
     "bin": ["swmen"]
 }

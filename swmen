@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use Icyboy\Core\Swoole\Server;
+
 $composer_installed = false;
 
 foreach (array(
@@ -39,16 +41,16 @@ function main($argc, $argv)
             echo PHP_EOL;
         } else {
             $input = file_get_contents('php://stdin');
-            require __DIR__ . '/swoole.php';
+            require __DIR__ . '/Swoole/Server.php';
             $construct_config = unserialize($input);
 
-            $server = new Swmen\Server($construct_config['config'], $construct_config['swoole_settings']);
+            $server = new Server($construct_config['config'], $construct_config['swoole_settings']);
             $server->start();
         }
     } else {
 
         require COMPOSER_INSTALLED;
-        $app = require dirname(COMPOSER_INSTALLED) . '/../bootstrap/app.php';
+        $app    = require dirname(COMPOSER_INSTALLED) . '/../bootstrap/app.php';
         $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 //      $kernel->bootstrap();
 
