@@ -1,0 +1,19 @@
+{
+    "name": "icyboyxp/swmen",
+    "description": "Swoole + Lumen",
+    "type": "library",
+    "keywords": ["swoole","lumen"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "icyboy",
+            "email": "icyboy@me.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+		"laravel/lumen-framework": "5.2.*"
+    },
+    "bin": ["swmen"]
+}
+
