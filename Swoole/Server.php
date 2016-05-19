@@ -84,10 +84,11 @@ class Server
             $accept_gzip = $this->gzip && isset($request->header['accept-encoding']) && stripos($request->header['accept-encoding'],
                     'gzip') !== false;
 
+            $response->header('Access-Control-Allow-Origin', '*');
             if ($illuminate_response instanceof Response) {
                 $this->dealWithResponse($response, $illuminate_response, $accept_gzip);
             } else {
-                $response->end((string)$illuminate_response->original);
+                $response->end((string)$illuminate_response);
             }
         } catch (ErrorException $e) {
             if (strncmp($e->getMessage(), 'swoole_', 7) === 0) {
