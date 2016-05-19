@@ -40,7 +40,7 @@ class Server
         $this->swoole_http_server->on('WorkerStart', [$this, 'onWorkerStart']);
         $this->swoole_http_server->on('request', [$this, 'onRequest']);
 
-        require __DIR__ . '../config/mime.php';
+        require __DIR__ . '/../config/mime.php';
 
         $this->swoole_http_server->start();
     }
