@@ -31,7 +31,6 @@ class Server
         if (!empty($swoole_settings)) {
             $this->swoole_http_server->set($swoole_settings);
         }
-
     }
 
     public function start()

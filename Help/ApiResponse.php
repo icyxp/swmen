@@ -8,7 +8,7 @@
 
 namespace Icyboy\Core\Help;
 
-class ApiReponse
+class ApiResponse
 {
     /**
      * 成功

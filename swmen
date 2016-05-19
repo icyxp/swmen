@@ -183,7 +183,7 @@ function start()
         'log_file'    => function () {
             return app()->storagePath() . '/logs/swmen.log';
         },
-        'daemonize'   => env('SWMEN_DAEMONIZE', 0),
+        'daemonize'   => env('SWMEN_DAEMONIZE', 1),
         'max_request' => env('SWMEN_MAX_REQUEST', 2000),
     ];
     foreach ($defaults as $key => $value) {
@@ -194,7 +194,7 @@ function start()
 
     $construct_config = [
         'config'          => [
-            'host'             => env('SWMEN_HOST', '127.0.0.1'),
+            'host'             => env('SWMEN_HOST', '0.0.0.0'),
             'port'             => env('SWMEN_PORT', 8088),
             'pid_file'         => getPidFile(),
             'root_dir'         => base_path(),
