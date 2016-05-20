@@ -118,7 +118,7 @@ function getPidFile()
     static $pid_file = false;
     if ($pid_file === false) {
         $app      = app();
-        $pid_file = env('SWMEN_PID_FILE', $app->storagePath() . '/logs/swmen.pid');
+        $pid_file = env('SWMEN_PID_FILE', $app->storagePath('/logs/swmen.pid'));
     }
 
     return $pid_file;
@@ -181,11 +181,16 @@ function start()
 
     $defaults = [
         'log_file'    => function () {
-            return app()->storagePath() . '/logs/swmen.log';
+            $path = app()->storagePath('/logs') . '/';
+            if (!is_dir($path)) {
+                mkdir($path, 0755, true);
+            }
+            return $path . 'swmen.log';
         },
         'daemonize'   => env('SWMEN_DAEMONIZE', 1),
         'max_request' => env('SWMEN_MAX_REQUEST', 2000),
     ];
+
     foreach ($defaults as $key => $value) {
         if (!isset($settings[$key])) {
             $settings[$key] = value($value);

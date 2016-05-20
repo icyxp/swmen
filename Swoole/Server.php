@@ -188,6 +188,5 @@ class Server
         }
 
         return false;
-
     }
 }
