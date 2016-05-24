@@ -91,9 +91,7 @@ class Server
                 $response->end((string)$illuminate_response);
             }
         } catch (ErrorException $e) {
-            if (strncmp($e->getMessage(), 'swoole_', 7) === 0) {
-                fwrite(STDOUT, $e->getFile() . '(' . $e->getLine() . '): ' . $e->getMessage() . PHP_EOL);
-            }
+            fwrite(STDOUT, $e->getFile() . '(' . $e->getLine() . '): ' . $e->getMessage() . PHP_EOL);
         } finally {
             if (count($this->lumen->getMiddleware()) > 0) {
                 $this->lumen->callTerminableMiddleware($illuminate_response);

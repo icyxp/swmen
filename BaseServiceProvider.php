@@ -9,7 +9,7 @@
 namespace Icyboy\Core;
 
 use Illuminate\Support\ServiceProvider;
-use MonLog;
+use Monolog;
 
 class BaseServiceProvider extends ServiceProvider
 {
