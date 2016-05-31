@@ -30,4 +30,9 @@ return [
      * 日志文件最大数
      */
     'log_max_files' => env('LOG_DAY', 30),
+
+    /**
+     * 格式化日志
+     */
+    'log_format'    => env('LOG_FORMAT', "[%datetime%] %HTTP_X_REQUEST_ID% %channel%.%level_name%: %message% %context% %extra%\n"),
 ];

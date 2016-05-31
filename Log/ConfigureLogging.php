@@ -105,7 +105,9 @@ class ConfigureLogging
      */
     protected function getDefaultFormatter()
     {
-        $strFormat = "[%datetime%] %HTTP_X_REQUEST_ID% %channel%.%level_name%: %message% %context% %extra%\n";
+        $strFormat = $this->config->get('log.log_format', '');
+        $strFormat && $strFormat = rtrim($strFormat, PHP_EOL) . PHP_EOL;
+
         return new LineFormatter($strFormat, null, true, true);
     }
 }
