@@ -106,7 +106,7 @@ class ConfigureLogging
     protected function getDefaultFormatter()
     {
         $strFormat = $this->config->get('log.log_format', '');
-        $strFormat && $strFormat = rtrim($strFormat, PHP_EOL) . PHP_EOL;
+        $strFormat && $strFormat = str_replace(array(PHP_EOL, '\n'), '', $strFormat) . PHP_EOL;
 
         return new LineFormatter($strFormat, null, true, true);
     }
