@@ -36,7 +36,7 @@ class ConfigureLogging
         $method               = 'configure' . ucfirst($app['config']['log.log_type']) . 'Handler';
         $this->config         = $app->make('config');
         $this->defaultLogPath = $app->storagePath() . '/logs/';
-        $this->defaultLogName = 'lumen';
+        $this->defaultLogName = 'swmen';
         $this->monoLog        = $monoLog;
 
         if ($this->config->get('app.log_path')) {
