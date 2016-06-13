@@ -129,7 +129,8 @@ class ValidateMiddleware
         $route_as        = array_get($route_config, 'as');
 
         //这个路由的验证规则
-        $this->validator_config_for_this_route = array_get($this->validate_config, $this->_getValidatorConfigKey($route_as));
+        $key = $this->_getValidatorConfigKey($route_as);
+        $key && $this->validator_config_for_this_route = array_get($this->validate_config, $key);
 
         //url参数
         $query_params = $request->query();
