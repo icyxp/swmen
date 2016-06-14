@@ -60,15 +60,19 @@ function main($argc, $argv)
                 break;
             case 'restart':
                 $pid  = sendSignal(SIGTERM);
-                $time = 0;
-                while (posix_getpgid($pid) && $time <= 10) {
-                    usleep(100000);
-                    $time++;
+                if ($pid) {
+                    $time = 0;
+                    while (posix_getpgid($pid) && $time <= 10) {
+                        usleep(100000);
+                        $time++;
+                    }
+
+                    if ($time > 100) {
+                        echo 'timeout' . PHP_EOL;
+                        exit(1);
+                    }
                 }
-                if ($time > 100) {
-                    echo 'timeout' . PHP_EOL;
-                    exit(1);
-                }
+
                 start();
                 break;
             case 'stop':
@@ -90,11 +94,12 @@ function main($argc, $argv)
 
 function sendSignal($sig)
 {
-    if ($pid = getPid()) {
+    $pid = getPid();
+    if ($pid) {
         posix_kill($pid, $sig);
+        return $pid;
     } else {
-        echo "not running!" . PHP_EOL;
-        exit(1);
+        return false;
     }
 }
 
@@ -116,9 +121,9 @@ function getPid()
 function getPidFile()
 {
     static $pid_file = false;
-    if ($pid_file === false) {
+    if (false === $pid_file) {
         $app      = app();
-        $pid_file = env('SWMEN_PID_FILE', $app->storagePath('/logs/swmen.pid'));
+        $pid_file = env('SWMEN_PID_FILE', $app->storagePath('logs/swmen.pid'));
     }
 
     return $pid_file;
@@ -181,10 +186,11 @@ function start()
 
     $defaults = [
         'log_file'    => function () {
-            $path = app()->storagePath('/logs') . '/';
+            $path = app()->storagePath('logs') . '/';
             if (!is_dir($path)) {
                 mkdir($path, 0755, true);
             }
+
             return $path . 'swmen.log';
         },
         'daemonize'   => env('SWMEN_DAEMONIZE', 1),
