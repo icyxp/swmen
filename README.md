@@ -112,7 +112,7 @@ Eexample:
  SWMEN_HOST=0.0.0.0
 ```
 
-Default host is 127.0.0.1:9050
+Default host is 0.0.0.0:8088
 
 See Swoole's document:
 
